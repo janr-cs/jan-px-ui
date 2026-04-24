@@ -1,5 +1,28 @@
 # @px-ui/core
 
+## 5.1.1
+
+### Patch Changes
+
+- dc4b397: export dialog stuff
+
+## 5.1.0
+
+### Minor Changes
+
+- 0597ec4: try to fix z-index issues
+
+## 5.0.0
+
+### Major Changes
+
+- 15215b1: Added relative classname
+
+### Minor Changes
+
+- 15215b1: Expose Tooltip portal props
+- 15215b1: Fixed tooltip popover z-index
+
 ## 4.9.0
 
 ### Minor Changes
