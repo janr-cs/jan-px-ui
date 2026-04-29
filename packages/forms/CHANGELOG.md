@@ -1,5 +1,11 @@
 # @px-ui/forms
 
+## 18.1.0
+
+### Minor Changes
+
+- 5d5f937: fix phone input validation
+
 ## 18.0.2
 
 ### Patch Changes
