@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { cn } from "@px-ui/core";
 import PhoneInputLib from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -7,11 +7,26 @@ import GoogleLibPhoneNumber from "google-libphonenumber";
 const phoneUtil = GoogleLibPhoneNumber.PhoneNumberUtil.getInstance();
 const PNF = GoogleLibPhoneNumber.PhoneNumberFormat;
 
+export const validatePhoneNumber = (
+  value: string | undefined | null,
+  country?: string,
+): boolean => {
+  if (!value) return true;
+  const phoneValue = value.startsWith("+") ? value : "+" + value;
+  try {
+    const parsed = phoneUtil.parseAndKeepRawInput(phoneValue, country);
+    return phoneUtil.isValidNumberForRegion(parsed, country);
+  } catch {
+    return false;
+  }
+};
+
 interface PhoneInputProps {
   value: string;
   onChange: (value: string) => void;
   country?: string;
   error?: boolean;
+  errorMessage?: string;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -22,51 +37,39 @@ export const PhoneInput = ({
   onChange,
   country = "us",
   error,
+  errorMessage,
   placeholder,
   disabled,
   className,
 }: PhoneInputProps) => {
-  const [isValid, setIsValid] = useState(true);
-
   const handleChange = (inputValue: string, data: any) => {
     if (!inputValue) {
-      setIsValid(true);
       onChange("");
       return;
     }
 
+    const phoneValue = inputValue.startsWith("+")
+      ? inputValue
+      : "+" + inputValue;
+
     try {
-      const phoneValue = inputValue.startsWith("+")
-        ? inputValue
-        : "+" + inputValue;
       const parsedNumber = phoneUtil.parseAndKeepRawInput(
         phoneValue,
         data.countryCode,
       );
-      const isNumberValid = phoneUtil.isValidNumberForRegion(
-        parsedNumber,
-        data.countryCode,
-      );
-
-      setIsValid(isNumberValid);
-
-      if (isNumberValid) {
-        const formatted = phoneUtil.format(parsedNumber, PNF.E164);
-        onChange(formatted);
-      } else {
-        onChange(phoneValue);
+      if (phoneUtil.isValidNumberForRegion(parsedNumber, data.countryCode)) {
+        onChange(phoneUtil.format(parsedNumber, PNF.E164));
+        return;
       }
-    } catch (e) {
-      setIsValid(false);
-      onChange(inputValue.startsWith("+") ? inputValue : "+" + inputValue);
+    } catch {
+      // fall through — pass raw value up so RHF validate can flag it
     }
+    onChange(phoneValue);
   };
 
   return (
     <div className={cn("flex w-full flex-col gap-1", className)}>
-      <div
-        className={`relative ${!isValid || error ? "phone-input-error" : ""}`}
-      >
+      <div className={`relative ${error ? "phone-input-error" : ""}`}>
         <PhoneInputLib
           country={country}
           value={value}
@@ -74,23 +77,19 @@ export const PhoneInput = ({
           disabled={disabled}
           placeholder={placeholder}
           inputClass={`!w-full !h-11 !text-base !rounded-lg !border ${
-            !isValid || error
+            error
               ? "!border-red-500 !bg-red-50"
               : "!border-gray-300 focus:!border-blue-500 focus:!ring-1 focus:!ring-blue-500"
           }`}
           buttonClass={`!rounded-l-lg !border-y !border-l ${
-            !isValid || error
-              ? "!border-red-500 !bg-red-50"
-              : "!border-gray-300"
+            error ? "!border-red-500 !bg-red-50" : "!border-gray-300"
           }`}
           containerClass="!w-full"
         />
       </div>
 
-      {(!isValid || error) && (
-        <p className="mt-1 text-xs font-medium text-red-500">
-          Please enter a valid phone number for this region.
-        </p>
+      {error && errorMessage && (
+        <p className="mt-1 text-xs font-medium text-red-500">{errorMessage}</p>
       )}
     </div>
   );
