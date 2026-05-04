@@ -1,5 +1,4 @@
 import React from "react";
-import React from "react";
 import { cn } from "@px-ui/core";
 import PhoneInputLib from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -26,7 +25,6 @@ interface PhoneInputProps {
   country?: string;
   error?: boolean;
   errorMessage?: string;
-  errorMessage?: string;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
@@ -37,7 +35,6 @@ export const PhoneInput = ({
   onChange,
   country = "us",
   error,
-  errorMessage,
   errorMessage,
   placeholder,
   disabled,
@@ -59,7 +56,6 @@ export const PhoneInput = ({
   return (
     <div className={cn("flex w-full flex-col gap-1", className)}>
       <div className={`relative ${error ? "phone-input-error" : ""}`}>
-      <div className={`relative ${error ? "phone-input-error" : ""}`}>
         <PhoneInputLib
           country={country}
           value={value}
@@ -68,20 +64,16 @@ export const PhoneInput = ({
           placeholder={placeholder}
           inputClass={`!w-full !h-11 !text-base !rounded-lg !border ${
             error
-            error
               ? "!border-red-500 !bg-red-50"
               : "!border-gray-300 focus:!border-blue-500 focus:!ring-1 focus:!ring-blue-500"
           }`}
           buttonClass={`!rounded-l-lg !border-y !border-l ${
-            error ? "!border-red-500 !bg-red-50" : "!border-gray-300"
             error ? "!border-red-500 !bg-red-50" : "!border-gray-300"
           }`}
           containerClass="!w-full"
         />
       </div>
 
-      {error && errorMessage && (
-        <p className="mt-1 text-xs font-medium text-red-500">{errorMessage}</p>
       {error && errorMessage && (
         <p className="mt-1 text-xs font-medium text-red-500">{errorMessage}</p>
       )}
