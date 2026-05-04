@@ -40,17 +40,34 @@ export const PhoneInput = ({
   disabled,
   className,
 }: PhoneInputProps) => {
-  const handleChange = (inputValue: string, data: { dialCode?: string }) => {
-    if (!inputValue || inputValue === data?.dialCode) {
+  const handleChange = (
+    inputValue: string,
+    data: { dialCode?: string; countryCode?: string },
+  ) => {
+    // Country-only selection: don't propagate, otherwise the controlled
+    // value resets to "" and react-phone-input-2 re-detects the country
+    // from the empty value, snapping the flag back to the default.
+    if (inputValue === data?.dialCode) return;
+
+    if (!inputValue) {
       onChange("");
       return;
     }
+
     const phoneValue = inputValue.startsWith("+") ? inputValue : "+" + inputValue;
     try {
-      onChange(phoneUtil.format(phoneUtil.parse(phoneValue), PNF.E164));
+      const parsed = phoneUtil.parseAndKeepRawInput(
+        phoneValue,
+        data.countryCode?.toUpperCase(),
+      );
+      if (phoneUtil.isValidNumber(parsed)) {
+        onChange(phoneUtil.format(parsed, PNF.E164));
+        return;
+      }
     } catch {
-      onChange(phoneValue);
+      // fall through to raw value
     }
+    onChange(phoneValue);
   };
 
   return (
