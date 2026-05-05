@@ -18,4 +18,4 @@ export {
 } from "./components/file-upload-field";
 export * as Field from "./components/field";
 export { FormInput, FormTextarea, FormCheckbox } from "./components/form";
-export { PhoneInput } from "./components/phone-input";
+export { PhoneInput, validatePhoneNumber } from "./components/phone-input";
