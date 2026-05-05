@@ -86,6 +86,7 @@ export const FileUploadField = React.forwardRef<
     // Hook options
     maxFiles,
     maxSize,
+    minSize,
     accept,
     multiple = false,
     onFilesChange,
@@ -98,6 +99,7 @@ export const FileUploadField = React.forwardRef<
   const uploadHook = useFileUpload({
     maxFiles,
     maxSize,
+    minSize,
     accept,
     multiple,
     initialFiles: initialFiles.map((f) => ({

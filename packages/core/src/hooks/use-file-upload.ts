@@ -111,6 +111,7 @@ export type UploadConfig = {
 export type UseFileUploadOptions = {
   maxFiles?: number;
   maxSize?: number;
+  minSize?: number;
   accept?: string;
   multiple?: boolean;
   initialFiles?: FileMetadata[];
@@ -261,6 +262,7 @@ export const useFileUpload = (
   const {
     maxFiles = Number.POSITIVE_INFINITY,
     maxSize = Number.POSITIVE_INFINITY,
+    minSize = 4 * 1024,
     accept = "*",
     multiple = false,
     onFilesChange,
@@ -272,6 +274,10 @@ export const useFileUpload = (
     (file: File): string | null => {
       if (file.size > maxSize) {
         return `File "${file.name}" exceeds the maximum size of ${formatBytes(maxSize)}.`;
+      }
+
+      if (file.size < minSize) {
+        return `File "${file.name}" is below the minimum size of ${formatBytes(minSize)}.`;
       }
 
       if (accept !== "*") {
@@ -297,7 +303,7 @@ export const useFileUpload = (
 
       return null;
     },
-    [accept, maxSize],
+    [accept, maxSize, minSize],
   );
 
   const createPreview = useCallback((file: File): string | undefined => {
